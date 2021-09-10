@@ -7,10 +7,14 @@ const product = [
         {id: 5, nom: "cacahuètes", prix: 2, image: "cacahuetes.png" }
 ]
 
+//Initialisation du panier
+const cart = [];
+//Récupération de la div ou s'affichera les cards de produits
 const maDivCard = document.querySelector("#productCard");
 
+//-------------------------------------------------------------------------------------------------------------------------------------------
 
-//
+//Création des cards de produits
 function makeACard(product){
         let productCardReady = `
                                                 <div class="card-group col-5 p-2">
@@ -42,7 +46,7 @@ function makeACard(product){
         return productCardReady;
 }
 
-
+//Récupération des produits crées en durs dans product[]
 function getProductsCards(products){
         let cards = "";
         
@@ -53,6 +57,7 @@ function getProductsCards(products){
         return cards;
 }
 
+//Affichage des cards de produits
 function showProducts(){
         
         //On insère d'abord les cards avec les boutons => on créer les boutons
@@ -60,8 +65,6 @@ function showProducts(){
         
         //Ensuite on affiche les boutons et fonctionnalités
         //Chaque fois qu'on clique sur le bouton "ajouter au panier" => id du produit qui s'affiche
-        
-        
         
         //Récupération des div.ajout avec leurs éléments
         const mesDivDajout = document.querySelectorAll(".ajout");   //=> tableau de div
@@ -75,10 +78,12 @@ function showProducts(){
         
                 plusBtn.addEventListener("click", () => {
                         plus(compteur, addToCartBtn);
+                        showCount();
                 })
                 
                 lessBtn.addEventListener("click", () => {
                         moins(compteur, addToCartBtn);
+                        showCount();
                 })
         
                 //au click d'un bouton ajouter au panier => récupérer la valeur du compteur
@@ -92,10 +97,7 @@ function showProducts(){
         
 }
 
-//accéder aux éléments afin de pouvoir les observer et les manipuler
-
-//2 fonctions :
-// fonction plus(){} => en charge d'incrémenter le compteur quand on click sur +
+// Fonction d'incrémentation de compteur pour l'ajout au panier via le bouton "ajouter au panier")
 function plus(inputCompteur, addToCartBtn){
         
         inputCompteur.value++;
@@ -106,7 +108,7 @@ function plus(inputCompteur, addToCartBtn){
         
 }
 
-//fonction moins(){} => en charge de décrémenter le compteur quand on clicke sur - sauf s'il est à 0
+//Fonction de décrémentation de compteur pour la suppression au panier via le bouton "ajouter au panier")
 function moins(inputCompteur, addToCartBtn){
         
         if (inputCompteur.value > 0){
@@ -134,9 +136,9 @@ btnPanier.addEventListener('click', (evt) => {
         displayCart(evt.target.value);
 })
 
-
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
+//Ajout de quantité au panier
 function addToCart(idProduct, quantityToAdd){
         quantityToAdd = parseInt(quantityToAdd);
         //Ajouter un nouvel élément au panier avec le bon id et une quantity = 1
@@ -158,12 +160,20 @@ function addToCart(idProduct, quantityToAdd){
         
 }
 
-//*----------------------------------------------------------------------------------------------------------------------------------
-const cart = [
-        {id:4, quantity: 5},
-        {id:2, quantity: 3}
-];
+//Suppression de quantité du panier
+function deleteToCart(idProduct){
+        let index = cart.findIndex(item => item.id === parseInt(idProduct) );
+        cart.splice(index, 1);
+        //On rappel la fonction d'affichage pour que ça se recharge direct
+        displayCart();
+        
+        showCount();
+        
+}
 
+//*----------------------------------------------------------------------------------------------------------------------------------
+
+//Affichage du panier
 function displayCart(){
         let total =0;
         //Initialisation de mon contenu de papier
@@ -267,7 +277,8 @@ function displayCart(){
         
         
 }
-//function enleveUnArticle => modifie le panier et redéclenche l'affichage du panier
+
+//Décrémentation d'une quantité d'un produit via le panier
 function deleteQuantityProduct(productId){
         let index = cart.findIndex(product => product.id == productId);
         
@@ -278,11 +289,12 @@ function deleteQuantityProduct(productId){
         } else{
                 cart[index].quantity--;
                 displayCart();
+                showCount();
         }
-        showCount();
+        
 }
 
-//function ajouteUnArticle => modifie le panier et redéclenche l'affichage du panier
+//Incrémentation d'une quantité d'un produit via le panier
 function addQuantityProduct(productId){
         
         //On cherche l'index du produit dans le tableau panier cart
@@ -294,36 +306,20 @@ function addQuantityProduct(productId){
         
 }
 
+//Affichage du nombre total de produits dans le panier
 function showCount(){
         let count = 0;
         const locateCount = document.querySelector("#count");
         
         cart.forEach(elt => {
-                let productToFind = product.find(e => e.id == elt.id);
-                let index = cart.findIndex(product => product.id == productToFind.id);
-                let quantities = cart[index].quantity;
-                count += quantities;
+                count += elt.quantity;
         })
-        console.log(count);
         
         //remplace le contenu de #count par le total des quantités
         locateCount.innerHTML = count;
         
 }
 
-
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------
-//fonction qui attends un id de produit => bouton.id à l'appel de cette fonction là haut
-function deleteToCart(idProduct){
-        let index = cart.findIndex(item => item.id === parseInt(idProduct) );
-        cart.splice(index, 1);
-        //On rappel la fonction d'affichage pour que ça se recharge direct
-        displayCart();
-        
-        showCount();
-        
-}
 
 
 
